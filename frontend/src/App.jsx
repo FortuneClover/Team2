@@ -7,8 +7,8 @@ const API_URL = 'http://localhost:8000'
 
 export default function App() {
   const [todos, setTodos] = useState([])
-  const [newTodo, setNewTodo] = useState('')
-  const [newDescription, setNewDescription] = useState('')
+  // const [newTodo, setNewTodo] = useState('')
+  // const [newDescription, setNewDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -150,16 +150,16 @@ export default function App() {
           )}
 
           {/* 라우팅 버튼 */}
-          <Link to="List">
+          <Link to="/list">
             <div className="mb-4 text-right">
-              <button
-                onClick={() => window.location.href = '/list'}
-                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-              >
-                ➕ 새로운 할 일 추가하기
-              </button>
+            <button
+              onClick={() => window.location.href = '/list'}
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+            >
+              ➕ 새로운 할 일 추가하기
+            </button>
             </div>
-          </Link>  
+          </Link>
 
           {/* Todo 목록 */}
           <div className="bg-white rounded-lg shadow-md">
@@ -270,6 +270,5 @@ export default function App() {
         </div>
       </div>
     </>
-  )
+  );
 }
-
