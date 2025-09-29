@@ -4,12 +4,14 @@ import { BrowserRouter,Routes,Route } from 'react-router-dom';
 import './index.css'
 import App from './App.jsx'
 import List from './List'
+import Login from './login'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/app" element={<App />} />
         <Route path="/list" element={<List />} />
       </Routes>
     </BrowserRouter>
