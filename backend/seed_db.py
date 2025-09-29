@@ -33,7 +33,7 @@ def seed_users_only():
                 password="chocho"
             ),
             User(
-                email="seungmo975", 
+                email="seungmo975@naver.com", 
                 nickname="손승모", 
                 password="tmdah5589@"
             )
@@ -51,6 +51,7 @@ def seed_users_only():
         
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed_users_only()
