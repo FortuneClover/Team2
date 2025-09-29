@@ -1,61 +1,81 @@
-import React, { useState } from 'react';
-import './login.css';
+import React, { useState } from "react";
+import "./login.css";
 
-const API_URL = 'http://localhost:8000'
+const API_URL = "http://localhost:8000";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const res = await fetch(`${API_URL}/login`, {
-      // schemas
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, remember }),
     });
 
     const data = await res.json();
-
-    if (res.ok) {
-      setMessage(data.message);
-      // 로그인 성공 처리
-    } else {
-      setMessage(data.message);
-    }
+    setMessage(data.message);
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        /><br/>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        /><br/>
-        <label>
-          <input
-            type="checkbox"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-          />
-          Remember me
-        </label><br/>
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className="container">
+      <h1 className="app-title">Login</h1>
+      <div className="login-box">
+        <form onSubmit={handleSubmit}>
+          <h1>로그인</h1>
+
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="login-options">
+            <div className="remember-me">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              <label>Remember me</label>
+            </div>
+            <a href="#" className="forgot-password">
+              Forgot password?
+            </a>
+          </div>
+
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </form>
+
+        <div className="signup-link">
+          <p>
+            Don’t have an account? <a href="#">Sign up</a>
+          </p>
+        </div>
+
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 }
