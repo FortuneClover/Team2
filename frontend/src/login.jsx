@@ -12,14 +12,13 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, remember }),
-    });
+    const res = await axios.patch(`${API_URL}/login`, {
+        user_id: email.trim(),
+        pd: password.trim()
+    })
 
-    const data = await res.json();
-    setMessage(data.message);
+    console.log(res);
+    // setMessage(data.message);
   };
 
   return (

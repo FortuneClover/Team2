@@ -27,17 +27,109 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ... (CORS 설정 및 엔드포인트 코드는 그대로 유지) ...
-
 # 루트 엔드포인트
 @app.get("/")
 async def root():
-    # 이제 테이블 생성이 분리되었으므로, 서버가 실행 중임을 알리는 메시지로 충분합니다.
-    return {"message": "게시물 API 서버가 실행 중입니다!"}
+    return {"message": "Todo API 서버가 실행 중입니다!"}
 
-# ... (get_todos, create_todo, update_todo 등의 CRUD 엔드포인트 유지) ...
+@app.post("/login", response_model=schemas.CheckUser)
+def check_user(
+    user_id : str,
+    password : str,
+    db : Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(models.User.email == user_id).first()
+    return user
 
-# -------------------------------------------------------------
+
+# # 모든 Todo 조회
+# @app.get("/todos", response_model=List[schemas.TodoResponse])
+# def get_todos(
+#     skip: int = 0,
+#     limit: int = 100,
+#     db: Session = Depends(get_db)
+# ):
+#     """모든 Todo 항목을 조회합니다."""
+#     todos = db.query(models.Todo).offset(skip).limit(limit).all()
+#     return todos
+
+# # 특정 Todo 조회
+# @app.get("/todos/{todo_id}", response_model=schemas.TodoResponse)
+# def get_todo(todo_id: int, db: Session = Depends(get_db)):
+#     """특정 ID의 Todo 항목을 조회합니다."""
+#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first() # 리스트로 받아와지기 때문에 .first()를 사용해서 리스트에서 뺌
+#     if not todo:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"ID {todo_id}인 Todo를 찾을 수 없습니다."
+#         )
+#     return todo
+
+# # 새로운 Todo 생성
+# @app.post("/todos", response_model=schemas.TodoResponse, status_code=status.HTTP_201_CREATED)
+# def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
+#     """새로운 Todo 항목을 생성합니다."""
+#     db_todo = models.Todo(**todo.dict())
+#     db.add(db_todo)
+#     db.commit()
+#     db.refresh(db_todo)
+#     return db_todo
+
+# # Todo 수정
+# @app.put("/todos/{todo_id}", response_model=schemas.TodoResponse)
+# def update_todo(
+#     todo_id: int,
+#     todo_update: schemas.TodoUpdate,
+#     db: Session = Depends(get_db)
+# ):
+#     """특정 ID의 Todo 항목을 수정합니다."""
+#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+#     if not todo:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"ID {todo_id}인 Todo를 찾을 수 없습니다."
+#         )
+    
+#     # 수정할 데이터만 업데이트
+#     update_data = todo_update.dict(exclude_unset=True)
+#     for key, value in update_data.items():
+#         setattr(todo, key, value)
+    
+#     db.commit()
+#     db.refresh(todo)
+#     return todo
+
+# # Todo 삭제
+# @app.delete("/todos/{todo_id}")
+# def delete_todo(todo_id: int, db: Session = Depends(get_db)):
+#     """특정 ID의 Todo 항목을 삭제합니다."""
+#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+#     if not todo:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"ID {todo_id}인 Todo를 찾을 수 없습니다."
+#         )
+    
+#     db.delete(todo)
+#     db.commit()
+#     return {"message": f"ID {todo_id}인 Todo가 성공적으로 삭제되었습니다."}
+
+# # 완료 상태 토글
+# @app.patch("/todos/{todo_id}/toggle", response_model=schemas.TodoResponse)
+# def toggle_todo_completion(todo_id: int, db: Session = Depends(get_db)):
+#     """Todo의 완료 상태를 토글합니다."""
+#     todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+#     if not todo:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"ID {todo_id}인 Todo를 찾을 수 없습니다."
+#         )
+    
+#     todo.completed = not todo.completed
+#     db.commit()
+#     db.refresh(todo)
+#     return todo
+
 # 서버 실행
 if __name__ == "__main__":
     # 1. 테이블 생성 함수 호출

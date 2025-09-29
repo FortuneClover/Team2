@@ -30,3 +30,6 @@ class TodoListResponse(BaseModel):
     todos: list[TodoResponse]
     total: int
 
+class CheckUser(BaseModel):
+    id : str
+    nickname : str
