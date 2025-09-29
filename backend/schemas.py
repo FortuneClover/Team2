@@ -37,3 +37,15 @@ class CheckUser(BaseModel):
 class User(BaseModel):
     id : int
     nickname : str
+
+class PostResponse(BaseModel):
+    id : str
+    title : str
+    content : str
+    user_id : int
+    genre_id : int
+    views : int
+
+class PostListResponse(BaseModel):
+    posts: list[PostResponse]
+    total: int

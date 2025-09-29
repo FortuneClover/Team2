@@ -22,15 +22,14 @@ export default function LoginForm() {
         password: password.trim(),
       });
 
-      // ✅ 로그인 성공 시 라우팅
-      navigate("/App");
+      navigate("/App", { state: { res } });
 
     } catch (err) {
       console.error("Login failed:", err);
       setMessage("로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
     }
   };
-  
+
   return (
     <div className="container">
       <h1 className="app-title">Login</h1>
