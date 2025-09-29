@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from 'axios';
 
@@ -10,18 +11,26 @@ export default function LoginForm() {
   const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate(); // ✅ 이 줄 추가
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await axios.post(`${API_URL}/login`, {
+    try {
+      const res = await axios.post(`${API_URL}/login`, {
         email: email.trim(),
-        password: password.trim()
-    })
+        password: password.trim(),
+      });
 
-    console.log(res);
-    // setMessage(data.message);
+      // ✅ 로그인 성공 시 라우팅
+      navigate("/App");
+
+    } catch (err) {
+      console.error("Login failed:", err);
+      setMessage("로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
+    }
   };
-
+  
   return (
     <div className="container">
       <h1 className="app-title">Login</h1>
