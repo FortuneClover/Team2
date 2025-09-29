@@ -11,7 +11,6 @@ from database import engine, get_db, Base # Base 임포트 추가
 # 🔑 시딩 함수 임포트 (추가된 부분)
 from seed_db import seed_users_only 
 
-
 # 🚨 (삭제) models.Base.metadata.create_all(bind=engine) # 최상위에서 실행하는 것은 지양합니다.
 # def create_tables(): # 중복된 정의 삭제
 
@@ -31,6 +30,16 @@ app = FastAPI(
     description="게시물 웹사이트를 위한 FastAPI API",
     version="1.0.0"
 )
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://localhost:3306", "http://localhost:8000"],  # React 개발 서버 주소
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 HTTP 메서드 허용
+    allow_headers=["*"],  # 모든 헤더 허용
+)
+
 
 # 루트 엔드포인트
 @app.get("/")
