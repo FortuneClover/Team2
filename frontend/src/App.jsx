@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import List from './List';
+import Write from './Write';
 import axios from 'axios'
 
 const API_URL = 'http://localhost:8000'
@@ -20,7 +20,7 @@ export default function App() {
   const fetchPosts = async () => {
     try {
       setLoading(true)
-      const response = await axios.get(`${API_URL}/Posts`)
+      const response = await axios.get(`${API_URL}/Post`)
       setPosts(response.data)
     } catch (err) {
       setError('할 일을 불러오는데 실패했습니다.')
@@ -150,10 +150,10 @@ export default function App() {
           )}
 
           {/* 라우팅 버튼 */}
-          <Link to="/list">
+          <Link to="/Write">
             <div className="mb-4 text-right">
             <button
-              onClick={() => window.location.href = '/list'}
+              onClick={() => window.location.href = '/Write'}
               className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
             >
               ➕ 새로운 할 일 추가하기
