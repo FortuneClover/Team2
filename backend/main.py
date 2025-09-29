@@ -46,13 +46,14 @@ app.add_middleware(
 async def root():
     return {"message": "Todo API 서버가 실행 중입니다!"}
 
-@app.post("/login", response_model=schemas.CheckUser)
-def check_user(
-    user_id : str,
-    password : str,
-    db : Session = Depends(get_db)
-):
-    user = db.query(models.User).filter(models.User.email == user_id).first()
+@app.post("/login", response_model=schemas.User)
+def login(credentials:schemas.CheckUser, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == credentials.email).first()
+    if not user or user.password != credentials.password:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
     return user
 
 

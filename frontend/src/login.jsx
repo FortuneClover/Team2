@@ -13,9 +13,9 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await axios.patch(`${API_URL}/login`, {
-        user_id: email.trim(),
-        pd: password.trim()
+    const res = await axios.post(`${API_URL}/login`, {
+        email: email.trim(),
+        password: password.trim()
     })
 
     console.log(res);

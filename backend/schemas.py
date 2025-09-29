@@ -31,5 +31,9 @@ class TodoListResponse(BaseModel):
     total: int
 
 class CheckUser(BaseModel):
-    id : str
+    email : str
+    password : str
+
+class User(BaseModel):
+    id : int
     nickname : str

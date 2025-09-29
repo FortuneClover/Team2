@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # MySQL 데이터베이스 URL (pymysql 드라이버 명시)
-DATABASE_URL = "mysql+pymysql://root:tmdah5589%40@localhost:3306/posting_website_db"
+DATABASE_URL = "mysql+pymysql://root:doitmysql@localhost:3306/posting_website_db"
 
 # SQLAlchemy 엔진 생성
 engine = create_engine(
