@@ -9,10 +9,11 @@ import schemas
 from database import engine, get_db, Base # Base 임포트 추가
 
 # 🔑 시딩 함수 임포트 (추가된 부분)
-from seed_db import seed_users_only 
+import seed_db
 
 # 🚨 (삭제) models.Base.metadata.create_all(bind=engine) # 최상위에서 실행하는 것은 지양합니다.
 # def create_tables(): # 중복된 정의 삭제
+
 
 
 # 🔑 함수: 데이터베이스 테이블 생성 (초기화)
@@ -149,9 +150,11 @@ def login(credentials:schemas.CheckUser, db: Session = Depends(get_db)):
 if __name__ == "__main__":
     # 1. 테이블 생성 함수 호출
     create_tables() 
-    
-    # 2. 시딩 함수 호출 (seed_db.py 실행)
-    seed_users_only() # <--- 이 부분이 추가되었습니다.
+
+    seed_db
+# # 2. 시딩 함수 호출 (seed_db.py 실행)
+#     seed_users_only() # <--- 이 부분이 추가되었습니다.
+#     seed_genres_only()
     
     # 3. Uvicorn 서버 실행
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
