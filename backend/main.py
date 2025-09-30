@@ -16,7 +16,6 @@ app = FastAPI(
 )
 
 # --- CORS 미들웨어 설정 ---
-# 프론트엔드 개발 서버(http://localhost:5173)에서의 요청을 허용합니다.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"], 
@@ -61,12 +60,15 @@ def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
 @app.get("/posts", response_model=schemas.PostListResponse)
 def get_posts(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 5,
     db: Session = Depends(get_db)
 ):
-    """모든 게시물 조회"""
-    # Eager Loading으로 author(작성자) 정보를 함께 조회합니다.
-    posts_query = db.query(models.Post).options(joinedload(models.Post.author)).order_by(models.Post.id.desc())
+    """모든 게시물 조회 (페이지네이션 적용)"""
+    # 쿼리 수정: joinedload를 사용하여 author와 genre 정보를 함께 로드합니다.
+    posts_query = db.query(models.Post).options(
+        joinedload(models.Post.author), 
+        joinedload(models.Post.genre) # 👈 이 부분이 추가되었습니다.
+    ).order_by(models.Post.id.desc())
     
     total = posts_query.count()
     posts = posts_query.offset(skip).limit(limit).all()
@@ -82,14 +84,12 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.refresh(db_post)
     return db_post
 
-# --- 3. Genre (장르) API (신규 추가) ---
+# --- 3. Genre (장르) API ---
 @app.get("/genres", response_model=schemas.GenreListResponse)
 def get_genres(db: Session = Depends(get_db)):
     """모든 장르 목록 조회"""
     genres_query = db.query(models.PostGenre).order_by(models.PostGenre.id)
-    
     total = genres_query.count()
     genres = genres_query.all()
-    
     return {"genres": genres, "total": total}
 

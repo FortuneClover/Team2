@@ -1,38 +1,156 @@
-/* --- 전역 스타일 및 변수 정의 --- */
+/* --- 기본 및 라이트/다크 모드 설정 --- */
 :root {
-  /* 폰트 및 기본 색상 설정 (다크 모드 기본) */
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   line-height: 1.6;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: #CBD5E0; /* 밝은 회색 텍스트 */
-  background-color: #1A202C; /* 어두운 남색 배경 */
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #f9fafb; /* Slightly grayer background for light mode */
+  }
 }
 
 body {
   margin: 0;
-  font-size: 16px;
+  /* display: flex; 와 place-items: center; 를 제거하여 margin: auto가 더 확실하게 동작하도록 합니다. */
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-/* --- 앱의 메인 컨테이너 스타일 --- */
-#root {
-  max-width: 960px; /* 콘텐츠 최대 너비 조정 */
-  margin: 0 auto;
-  padding: 2rem 1.5rem; /* 좌우 패딩 추가 */
+/* --- 앱 전체 레이아웃 --- */
+.app-container {
   width: 100%;
-  box-sizing: border-box;
-  text-align: left; /* 전체 정렬을 왼쪽으로 변경 */
+  max-width: 800px;
+  margin: 0 auto; /* 이 속성으로 컨테이너를 중앙 정렬합니다. */
+  padding: 1rem 2rem;
+}
+
+.app-layout-header {
+  padding: 1rem 0;
+  border-bottom: 1px solid #444;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.app-layout-header a {
+  text-decoration: none;
+  color: #A0AEC0;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+@media (prefers-color-scheme: light) {
+  .app-layout-header { border-bottom-color: #ddd; }
+  .app-layout-header a { color: #4A5568; }
 }
 
 
-/* --- 공통 컴포넌트 스타일 --- */
-/* 범용 버튼 스타일 */
+/* --- 게시판 헤더 --- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #4A5568;
+}
+
+.title-group h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+.title-group p {
+  margin: 0.25rem 0 0;
+  color: #A0AEC0;
+}
+
+@media (prefers-color-scheme: light) {
+  .app-header { border-bottom-color: #e2e8f0; }
+  .title-group p { color: #718096; }
+}
+
+/* --- 게시물 목록 --- */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- 게시물 카드 --- */
+.post-card {
+  background-color: #2D3748;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.post-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.post-card p {
+  margin: 0 0 1rem;
+  color: #CBD5E0;
+}
+
+@media (prefers-color-scheme: light) {
+  .post-card { 
+    background-color: #FFFFFF; 
+    border: 1px solid #e5e7eb;
+  }
+  .post-card p { color: #4A5568; }
+}
+
+
+/* --- 게시물 메타 정보 (장르 + 작성자) --- */
+.post-meta {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #A0AEC0;
+  border-top: 1px solid #4A5568;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.genre-tag {
+  background-color: #4A5568;
+  color: #EDF2F7;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  margin-right: 0.75rem; /* 👈 이 부분이 추가되었습니다. */
+}
+
+@media (prefers-color-scheme: light) {
+  .post-meta { 
+    color: #718096;
+    border-top-color: #e2e8f0;
+  }
+  .genre-tag {
+    background-color: #EDF2F7;
+    color: #4A5568;
+  }
+}
+
+
+/* --- 버튼 스타일 --- */
 .btn {
   display: inline-block;
   border-radius: 8px;
@@ -42,107 +160,40 @@ body {
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background-color 0.25s, color 0.25s, transform 0.1s;
+  transition: all 0.25s;
 }
-.btn:hover {
-  transform: translateY(-2px); /* 살짝 떠오르는 효과 */
+.btn:disabled {
+  background-color: #4A5568;
+  cursor: not-allowed;
 }
+
+/* 메인 액션 버튼 (새 글 작성 등) */
 .btn-primary {
-  background-color: #4F46E5; /* 인디고 색상 */
+  background-color: #4F46E5;
   color: white;
 }
 .btn-primary:hover {
   background-color: #4338CA;
+  transform: translateY(-2px);
 }
 
-
-/* --- 헤더 영역 스타일 --- */
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #2D3748;
+/* 보조 액션 버튼 (더 보기 등) */
+.btn-secondary {
+  background-color: #4A5568;
+  color: #EDF2F7;
 }
-.app-header .title-group h1 {
-  margin: 0;
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: #F7FAFC;
+.btn-secondary:hover {
+  background-color: #718096;
+  transform: translateY(-2px);
 }
-.app-header .title-group p {
-  margin: 0.25rem 0 0;
-  color: #A0AEC0;
-}
-
-
-/* --- 게시물 카드 스타일 --- */
-.post-list {
-  display: grid;
-  gap: 1.5rem; /* 카드 사이의 간격 */
-}
-.post-card {
-  padding: 1.75rem;
-  border-radius: 12px;
-  background-color: #2D3748; /* 카드 배경색 */
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-}
-.post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-}
-.post-card h2 {
-  margin: 0 0 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #E2E8F0;
-}
-.post-card p {
-  margin: 0 0 1.25rem;
-  color: #A0AEC0;
-  line-height: 1.7;
-}
-.post-card .author-info {
-  text-align: right;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #718096;
-}
-
-
-/* --- 라이트 모드 스타일 --- */
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #2D3748; /* 어두운 회색 텍스트 */
-    background-color: #F7FAFC; /* 밝은 회색 배경 */
+  .btn-secondary {
+    background-color: #E2E8F0;
+    color: #2D3748;
+    border: 1px solid #d1d5db;
   }
-  .app-header {
-    border-bottom-color: #E2E8F0;
-  }
-  .app-header .title-group h1 {
-    color: #1A202C;
-  }
-  .app-header .title-group p {
-    color: #4A5568;
-  }
-  .post-card {
-    background-color: #FFFFFF;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  }
-  .post-card:hover {
-     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  }
-  .post-card h2 {
-    color: #1A202C;
-  }
-  .post-card p {
-    color: #4A5568;
-  }
-  .post-card .author-info {
-    color: #718096;
+  .btn-secondary:hover {
+    background-color: #CBD5E0;
   }
 }
 
