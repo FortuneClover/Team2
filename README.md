@@ -7,6 +7,7 @@
 ppt link
 https://www.canva.com/design/DAG0b3XLHkA/2YJboctumxTS4rGL8lyAQg/edit?utm_content=DAG0b3XLHkA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
+```python
 Team2/
 ├── backend/
 │   ├── database.py          # 데이터베이스 연결
@@ -33,3 +34,4 @@ Team2/
 │   ├── tailwind.config.js
 │   └── .env                 # 환경 변수 (생성 필요)
 └── README.md
+```
