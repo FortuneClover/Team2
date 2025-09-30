@@ -1,51 +1,45 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
-# Todo 생성 시 사용할 스키마
-class TodoCreate(BaseModel):
-    title: str = Field(..., min_length=1, max_length=200, description="할 일 제목")
-    description: Optional[str] = Field(None, max_length=500, description="할 일 설명")
+# ==================================================================
+# User (회원) 관련 스키마
+# ==================================================================
 
-# Todo 업데이트 시 사용할 스키마
-class TodoUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=500)
-    completed: Optional[bool] = None
+# --- 로그인 요청 시 사용할 스키마 ---
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
-# Todo 응답 시 사용할 스키마
-class TodoResponse(BaseModel):
+# --- 응답 시 클라이언트에게 전달할 사용자 정보 스키마 ---
+#    (비밀번호 등 민감한 정보는 제외)
+class UserResponse(BaseModel):
     id: int
-    title: str
-    description: Optional[str] = None
-    completed: bool
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+    nickname: str
+    email: str
 
     class Config:
-        from_attributes = True  # SQLAlchemy 모델을 Pydantic 모델로 변환
+        from_attributes = True # SQLAlchemy 모델을 Pydantic 모델로 변환
 
-# 여러 Todo를 응답할 때 사용할 스키마
-class TodoListResponse(BaseModel):
-    todos: list[TodoResponse]
-    total: int
+# ==================================================================
+# Post (게시물) 관련 스키마
+# ==================================================================
 
-class CheckUser(BaseModel):
-    email : str
-    password : str
-
-class User(BaseModel):
-    id : int
-    nickname : str
-
+# --- 게시물 응답 시 사용할 스키마 ---
+#    - author 필드에 위에서 정의한 UserResponse 스키마를 사용하여
+#      작성자 정보를 객체 형태로 포함시킵니다.
 class PostResponse(BaseModel):
-    id : str
-    title : str
-    content : str
-    user_id : int
-    genre_id : int
-    views : int
+    id: int
+    title: str
+    content: str
+    views: int
+    created_at: datetime
+    author: UserResponse # 👈 이 부분이 핵심적인 변경사항입니다.
 
+    class Config:
+        from_attributes = True
+
+# --- 여러 게시물을 응답할 때 사용할 스키마 ---
 class PostListResponse(BaseModel):
-    posts: list[PostResponse]
+    posts: List[PostResponse]
     total: int

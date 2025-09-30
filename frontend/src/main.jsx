@@ -1,19 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter,Routes,Route } from 'react-router-dom';
-import './index.css'
-import App from './App.jsx'
-import Write from './Write'
-import Login from './login'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App.jsx';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+// ✅ App.css 파일을 여기서 임포트하여 전역 스타일을 적용합니다.
+import './App.css'; 
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/app" element={<App />} />
-        <Route path="/write" element={<Write />} />
-      </Routes>
+      <App />
     </BrowserRouter>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);
+

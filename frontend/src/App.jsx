@@ -1,274 +1,107 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom';
-import Write from './Write';
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import LoginForm from './login.jsx';
+import Write from './Write.jsx';
 
-const API_URL = 'http://localhost:8000'
+// 백엔드 서버 주소
+const API_URL = "http://localhost:8000";
 
-export default function App() {
-  const [Posts, setPosts] = useState([])
-  // const [newPost, setNewPost] = useState('')
-  // const [newDescription, setNewDescription] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+// --- 게시판 메인 페이지 컴포넌트 ---
+function MainApp() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const user = location.state?.user;
 
-  // 모달 상태
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedPost, setSelectedPost] = useState(null)
-
-  // Post 목록 조회 // rendering
-  const fetchPosts = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get(`${API_URL}/Post`)
-      setPosts(response.data)
-    } catch (err) {
-      setError('할 일을 불러오는데 실패했습니다.')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Post 추가 // pick
-  // const addPost = async (e) => {
-  //   e.preventDefault()
-  //   if (!newPost.trim()) return
-
-  //   try {
-  //     const response = await axios.post(`${API_URL}/Posts`, {
-  //       title: newPost.trim(),
-  //       description: newDescription.trim() || undefined
-  //     })
-  //     setPosts([...Posts, response.data])
-  //     setNewPost('')
-  //     setNewDescription('')
-  //     setError('')
-  //   } catch (err) {
-  //     setError('할 일 추가에 실패했습니다.')
-  //     console.error(err)
-  //   }
-  // }
-
-  // 커스텀 모달 열기
-  const openDeleteModal = (Post) => {
-    setSelectedPost(Post)
-    setIsModalOpen(true)
-  }
-
-  // 모달에서 삭제 확정
-  const confirmDelete = async () => {
-    if (!selectedPost) return
-    try {
-      await axios.delete(`${API_URL}/Posts/${selectedPost.id}`)
-      setPosts(Posts.filter(Post => Post.id !== selectedPost.id))
-      setSelectedPost(null)
-      setIsModalOpen(false)
-    } catch (err) {
-      setError('할 일 삭제에 실패했습니다.')
-      console.error(err)
-    }
-  }
-
-  // Post 완료 상태 토글
-  const togglePost = async (id) => {
-    try {
-      const response = await axios.patch(`${API_URL}/Posts/${id}/toggle`)
-      setPosts(Posts.map(Post => Post.id === id ? response.data : Post))
-    } catch (err) {
-      setError('상태 변경에 실패했습니다.')
-      console.error(err)
-    }
-  }
-
-  // 랜더링용 action, 즉 return 하기 전에 한번 <Post>데이터 불러오기 전용
   useEffect(() => {
-    fetchPosts()
-  },[]) // 빈 배열이면 한번만 수행하겠다는 거, 안에 값을 넣으면, 해당 값이 변할 때 마다 새로 불러옴.
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/posts`);
+        // 백엔드 응답 형식에 맞게 데이터 설정
+        setPosts(response.data.posts || []); 
+      } catch (err) {
+        console.error("게시물을 불러오는데 실패했습니다:", err);
+        setError("게시물을 불러올 수 없습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  if (loading) return <div className="text-center p-10">로딩 중...</div>;
+  if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-8 flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl px-4 py-8 bg-white rounded-lg shadow-md">
-          {/* 헤더 */}
-          <header className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">📝 Post App</h1>
-          </header>
-
-          {/* 에러 메시지 */}
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-              <div className="flex justify-between items-center">
-                <span>{error}</span>
-                <button 
-                  onClick={() => setError('')}
-                  className="text-red-500 hover:text-red-700 font-bold"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Post 추가 폼
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <form onSubmit={addPost}>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="할 일을 입력하세요..."
-                  value={newPost}
-                  onChange={(e) => setNewPost(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="mb-4">
-                <textarea
-                  placeholder="설명 (선택사항)"
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={!newPost.trim()}
-                className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
-              >
-                ➕ 할 일 추가
-              </button>
-            </form>
-          </div> */}
-
-          {/* 로딩 */}
-          {loading && (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <p className="mt-2 text-gray-600">로딩 중...</p>
-            </div>
-          )}
-
-          {/* 라우팅 버튼 */}
-          <Link to="/Write">
-            <div className="mb-4 text-right">
-            <button
-              onClick={() => window.location.href = '/Write'}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-            >
-              ➕ 새로운 할 일 추가하기
-            </button>
-            </div>
-          </Link>
-
-          {/* Post 목록 */}
-          <div className="bg-white rounded-lg shadow-md">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">
-                할 일 목록 ({Posts.length}개)
-              </h2>
-            </div>
-
-            {Posts.length === 0 ? (
-              <div className="px-6 py-12 text-center">
-                <div className="text-6xl mb-4">📝</div>
-                <p className="text-gray-500 text-lg">할 일이 없습니다</p>
-                <p className="text-gray-400 mt-1">새로운 할 일을 추가해보세요!</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200">
-                {Posts.map((Post) => (
-                  <div key={Post.id} className="px-6 py-4 hover:bg-gray-50 transition duration-150">
-                    <div className="flex items-start space-x-3">
-                      {/* 체크박스 */}
-                      <input
-                        type="checkbox"
-                        checked={Post.completed}
-                        onChange={() => togglePost(Post.id)}
-                        className="mt-1 h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
-                      />
-                      
-                      {/* Post 내용 */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className={`text-lg font-medium ${
-                          Post.completed 
-                            ? 'line-through text-gray-500' 
-                            : 'text-gray-900'
-                        }`}>
-                          {Post.title}
-                        </h3>
-                        
-                        {Post.description && (
-                          <p className={`mt-1 text-sm ${
-                            Post.completed ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            {Post.description}
-                          </p>
-                        )}
-                        
-                        <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
-                          <span>
-                            생성일: {new Date(Post.created_at).toLocaleDateString('ko-KR')}
-                          </span>
-                          {Post.completed && (
-                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                              완료
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* ✅ 커스텀 모달 열기 버튼 */}
-                      <button
-                        onClick={() => openDeleteModal(Post)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition duration-200"
-                        title="삭제"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* 커스텀 모달 */}
-          {isModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  정말 삭제하시겠습니까?
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  "{selectedPost?.title}" 할 일이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
-                </p>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
-                  >
-                    취소
-                  </button>
-                  <button
-                    onClick={confirmDelete}
-                    className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
-                  >
-                    삭제
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 푸터 */}
-          <footer className="mt-12 text-center text-gray-500 text-sm">
-            <p>React 19 + JavaScript + Tailwind CSS + Vite 7</p>
-          </footer>
+      {/* 헤더 부분: app-header 클래스 적용 */}
+      <header className="app-header">
+        <div className="title-group">
+          <h1>게시판</h1>
+          {user && <p>{user.nickname}님, 환영합니다!</p>}
         </div>
-      </div>
+        {/* 버튼: btn 및 btn-primary 클래스 적용 */}
+        <button 
+          onClick={() => navigate('/Write')}
+          className="btn btn-primary"
+        >
+          새 글 작성
+        </button>
+      </header>
+
+      {/* 게시물 목록: post-list 클래스 적용 */}
+      <main className="post-list">
+        {posts.length > 0 ? (
+          posts.map(post => (
+            // 각 게시물: post-card 클래스 적용
+            <div key={post.id} className="post-card">
+              <h2>{post.title}</h2>
+              <p>{post.content}</p>
+              <div className="author-info">
+                <span>작성자: {post.author ? post.author.nickname : '알 수 없음'}</span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="post-card text-center">
+            <p>아직 게시물이 없습니다. 첫 번째 게시물을 작성해보세요!</p>
+          </div>
+        )}
+      </main>
     </>
   );
 }
+
+// --- 공통 레이아웃 컴포넌트 ---
+function AppLayout() {
+  return (
+    <div>
+      <header style={{ padding: '1rem', borderBottom: '1px solid #444', textAlign: 'center' }}>
+        <a href="/App" style={{ textDecoration: 'none', color: '#A0AEC0' }}>Community Board</a>
+      </header>
+      <main>
+        <Outlet /> 
+      </main>
+    </div>
+  );
+}
+
+// --- 라우터 설정 ---
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LoginForm />} />
+      <Route element={<AppLayout />}>
+        <Route path="/App" element={<MainApp />} />
+        <Route path="/Write" element={<Write />} />
+      </Route>
+      <Route path="*" element={<div>404 Not Found</div>} />
+    </Routes>
+  );
+}
+

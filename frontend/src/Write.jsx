@@ -6,21 +6,21 @@ import App from './App'
 const API_URL = 'http://localhost:8000'
 
 export default function List(){
-  const [newTodo, setNewTodo] = useState('')
+  const [newPost, setNewPost] = useState('')
   const [newDescription, setNewDescription] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('') // ✅ 추가
-    // Todo 추가 // pick
-    const addTodo = async (e) => {
+    // Post 추가 // pick
+    const addPost = async (e) => {
     e.preventDefault()
-    if (!newTodo.trim()) return
+    if (!newPost.trim()) return
 
     try {
-        const response = await axios.post(`${API_URL}/todos`, {
-        title: newTodo.trim(),
-        description: newDescription.trim() || undefined
+        const response = await axios.post(`${API_URL}/posts`, {
+        title: newPost.trim(),
+        content: newDescription.trim() || undefined
         })
-        setNewTodo('')
+        setNewPost('')
         setNewDescription('')
         setError('')
         setSuccess('✅ 할 일이 성공적으로 추가되었습니다!')
@@ -32,15 +32,15 @@ export default function List(){
 
     return (
       <>
-        {/* // Todo 추가 폼 */}
+        {/* // Post 추가 폼 */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <form onSubmit={addTodo}>
+          <form onSubmit={addPost}>
             <div className="mb-4">
               <input
                 type="text"
                 placeholder="할 일을 입력하세요..."
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -55,7 +55,7 @@ export default function List(){
             </div>
             <button
               type="submit"
-              disabled={!newTodo.trim()}
+              disabled={!newPost.trim()}
               className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
             >
               ➕ 할 일 추가
