@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from 'axios';
 
-// 백엔드 서버의 주소입니다. 환경에 맞게 수정할 수 있습니다.
+// 백엔드 서버의 주소입니다.
 const API_URL = "http://localhost:8000";
 
 export default function LoginForm() {
@@ -23,20 +23,22 @@ export default function LoginForm() {
         email: email.trim(),
         password: password.trim(),
       });
+      
+      const userData = res.data;
 
-      // --- ✅ 문제 해결 ---
-      // 1. axios 응답 객체(res)에서 실제 데이터(res.data)를 추출합니다.
-      const userData = res.data; 
+      // --- ✅ sessionStorage 로직 적용 ---
+      // 1. 받아온 사용자 정보를 JSON 문자열 형태로 sessionStorage에 저장합니다.
+      //    이제 브라우저를 새로고침해도 로그인 정보가 유지됩니다.
+      sessionStorage.setItem('user', JSON.stringify(userData));
 
-      // 2. navigate 함수의 state에는 순수한 데이터(userData)만 전달합니다.
-      //    이렇게 하면 MainApp 컴포넌트에서 로그인한 사용자 정보를 사용할 수 있습니다.
-      //    경로도 '/App'이 아닌 컴포넌트 이름과 맞춘 '/main' 등으로 하는 것이 일반적이나,
-      //    app.jsx 라우터 설정에 따라 '/App'으로 유지했습니다.
-      navigate("/App", { state: { user: userData } });
+      // 2. 게시판 페이지로 이동시킵니다.
+      navigate("/App");
 
     } catch (err) {
       console.error("Login failed:", err);
-      setMessage("로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
+      // 백엔드에서 보낸 에러 메시지가 있다면 표시, 없다면 기본 메시지
+      const detail = err.response?.data?.detail;
+      setMessage(detail || "로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
     }
   };
 
@@ -97,3 +99,4 @@ export default function LoginForm() {
     </div>
   );
 }
+
