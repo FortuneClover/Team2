@@ -23,6 +23,22 @@ class UserResponse(BaseModel):
         from_attributes = True # SQLAlchemy 모델을 Pydantic 모델로 자동 변환합니다.
 
 # ==================================================================
+# Genre (장르) 관련 스키마 (신규 추가)
+# ==================================================================
+class GenreResponse(BaseModel):
+    """장르 정보를 응답으로 보낼 때의 형식입니다."""
+    id: int
+    name: str
+
+    class Config:
+        from_attributes = True
+
+class GenreListResponse(BaseModel):
+    """장르 목록 전체를 응답으로 보낼 때의 형식입니다."""
+    genres: List[GenreResponse]
+    total: int
+
+# ==================================================================
 # Post (게시물) 관련 스키마
 # ==================================================================
 

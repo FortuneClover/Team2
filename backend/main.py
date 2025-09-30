@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session, joinedload # 👈 joinedload를 임포트합니다.
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 
 import models
@@ -73,15 +73,23 @@ def get_posts(
     
     return {"posts": posts, "total": total}
 
-# --- ✅ 이 부분이 추가되었습니다 ---
 @app.post("/posts", response_model=schemas.PostResponse, status_code=status.HTTP_201_CREATED)
 def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     """새로운 게시물 생성"""
-    # Pydantic 모델을 SQLAlchemy 모델 인스턴스로 변환하여 DB에 저장합니다.
     db_post = models.Post(**post.dict())
-    
     db.add(db_post)
     db.commit()
-    db.refresh(db_post) # DB에서 생성된 id 등의 최신 정보를 다시 불러옵니다.
+    db.refresh(db_post)
     return db_post
+
+# --- 3. Genre (장르) API (신규 추가) ---
+@app.get("/genres", response_model=schemas.GenreListResponse)
+def get_genres(db: Session = Depends(get_db)):
+    """모든 장르 목록 조회"""
+    genres_query = db.query(models.PostGenre).order_by(models.PostGenre.id)
+    
+    total = genres_query.count()
+    genres = genres_query.all()
+    
+    return {"genres": genres, "total": total}
 
